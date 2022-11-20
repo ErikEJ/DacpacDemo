@@ -1,0 +1,15 @@
+<Project Sdk="MSBuild.Sdk.SqlProj/2.2.0">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<SqlServerVersion>SqlAzure</SqlServerVersion>
+		<AnsiNulls>True</AnsiNulls>
+		<QuotedIdentifier>True</QuotedIdentifier>
+		<CompatibilityMode>150</CompatibilityMode>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="..\ErikEJ.DacpacDemo.DatabaseDesign\dbo\**\*.sql" />
+	</ItemGroup>
+
+</Project>

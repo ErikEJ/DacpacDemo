@@ -1,0 +1,23 @@
+pool:
+  vmImage: 'windows-latest'
+
+trigger:
+  branches:
+    include:
+      - main
+
+name: 1.0$(Rev:.r)
+
+steps:
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Build and copy Database Project(.dacpac) to articfact staging'
+    inputs:    
+      command: build
+      projects: src\ErikEJ.DacpacDemo.DatabaseBuild\ErikEJ.DacpacDemo.DatabaseBuild.csproj
+      publishWebProjects: False
+      arguments: '--configuration Release -o $(Build.ArtifactStagingDirectory)'
+      zipAfterPublish: False
+
+  - publish: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'drop'
