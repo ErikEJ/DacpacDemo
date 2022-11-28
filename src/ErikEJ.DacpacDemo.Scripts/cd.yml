@@ -20,7 +20,7 @@ stages:
           # create in advance and add approval gates to it
           environment: '${{env}}'
           pool:
-            vmImage: 'windows-latest'
+            vmImage: 'ubuntu-latest'
           displayName: 'Deploy to ${{env}} database'
           strategy:
             runOnce:

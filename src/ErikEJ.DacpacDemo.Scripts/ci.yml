@@ -1,5 +1,5 @@
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 trigger:
   branches:
@@ -14,7 +14,7 @@ steps:
     displayName: 'Build and copy Database Project(.dacpac) to articfact staging'
     inputs:    
       command: build
-      projects: src\ErikEJ.DacpacDemo.DatabaseBuild\ErikEJ.DacpacDemo.DatabaseBuild.csproj
+      projects: src/ErikEJ.DacpacDemo.DatabaseBuild/ErikEJ.DacpacDemo.DatabaseBuild.csproj
       publishWebProjects: False
       arguments: '--configuration Release -o $(Build.ArtifactStagingDirectory)'
       zipAfterPublish: False
