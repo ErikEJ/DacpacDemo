@@ -37,7 +37,24 @@ stages:
                       Inline: |
                         $context = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile.DefaultContext
                         $sqlToken = [Microsoft.Azure.Commands.Common.Authentication.AzureSession]::Instance.AuthenticationFactory.Authenticate($context.Account, $context.Environment, $context.Tenant.Id.ToString(), $null, [Microsoft.Azure.Commands.Common.Authentication.ShowDialog]::Never, $null, "https://database.windows.net").AccessToken
-                        Write-Host ("##vso[task.setvariable variable=SQLTOKEN;]$sqlToken")                  
+                        Write-Host ("##vso[task.setvariable variable=SQLTOKEN;]$sqlToken")   
+                        
+                  - task: PowerShell@2
+                    displayName: Deploy DataLoss script
+                    inputs:
+                      targetType: inline
+                      script: |
+                        if ($Null -eq (Get-PackageProvider -Name NuGet -ErrorAction Ignore)) {
+                           Install-PackageProvider -Name NuGet -Force -Scope CurrentUser;
+                        }
+                        $connectionString = $($env:ConnectionStringsDefaultE2E)
+                        Write-Host $connectionString
+                        Install-Module -Name SqlServer -Force -Scope CurrentUser -AllowClobber;
+                        if(($db = Get-SqlDatabase -ConnectionString $connectionString -ErrorAction SilentlyContinue)) {
+                           Invoke-Sqlcmd -InputFile "$(Pipeline.Workspace)/CI_Build/drop/Sample/DataLossScript.sql" -ConnectionString $connectionString -AccessToken $(sqlToken) -ErrorAction Stop
+                        } else {
+                           Write-Host "Database 'E2E' does not exist."
+                        }
 
                   - task: SqlAzureDacpacDeployment@1
                     displayName: Deploy .dacpac using access token
